@@ -8,6 +8,8 @@ input_file = "path_to_file"
 Signal = up.open(input_file)['Signal']
 Background = up.open(input_file)['Background']
 
+var_list = list(mapping.keys())
+
 df_S = Signal.pandas.df(var_list)
 df_B = Background.pandas.df(var_list)
 
