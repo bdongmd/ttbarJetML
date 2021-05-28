@@ -4,9 +4,9 @@ import h5py
 import pandas as pd
 from variable_mapping import mapping
 
-input_file = "path_to_file"
-Signal = up.open(input_file)['Signal']
-Background = up.open(input_file)['Background']
+input_file = "/afs/cern.ch/work/c/cainswor/public/DL/tt_jets_NN_input.root"
+Signal = up.open(input_file)['NN_signal']
+Background = up.open(input_file)['NN_background']
 
 var_list = list(mapping.keys())
 
