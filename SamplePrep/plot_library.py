@@ -29,11 +29,8 @@ def variable_plotting(jets, outputFile = "output/test.pdf"):
 				b = b.dropna()
 				s = s.dropna()
 			
-				minval = np.amin(b)
-				if 'pt' in var:
-					maxval = np.percentile(u,99.99)
-				else:
-					maxval = max([np.amax(u), np.amax(c), np.amax(b)])*1.4
+				minval = min([np.amin(s), np.amin(b)])
+				maxval = max([np.amax(s), np.amax(b)])*1.4
 				binning = np.linspace(minval,maxval,nbins)
 			
 				axobj.hist(b, binning,histtype=u'step', color='orange',label='background',density=1)
