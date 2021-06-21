@@ -26,8 +26,13 @@ def variable_plotting(signal, bkg, outputFile = "output/test.pdf"):
 				b = b.dropna()
 				s = s.dropna()
 			
+<<<<<<< HEAD
 				minval = np.amin(b)
 				maxval = max([np.amax(u), np.amax(c), np.amax(b)])*1.4
+=======
+				minval = min([np.amin(s), np.amin(b)])
+				maxval = max([np.amax(s), np.amax(b)])*1.4
+>>>>>>> eed0e24f07b012c4b3b8a627c9c0931bba3ce78b
 				binning = np.linspace(minval,maxval,nbins)
 			
 				axobj.hist(b, binning,histtype=u'step', color='orange',label='background',density=1)
