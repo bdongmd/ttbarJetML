@@ -38,7 +38,7 @@ np.random.shuffle(Y_train)
 
 
 outputfile = h5py.File(args.outputfile,'w')
-outputfile.create_dataset(X_train, data='X_train')
-outputfile.create_dataset(Y_train, data='Y_train')
+outputfile.create_dataset(X_train, data='X_train', compression='gzip')
+outputfile.create_dataset(Y_train, data='Y_train', compression='gzip')
 outputfile.close()
 
