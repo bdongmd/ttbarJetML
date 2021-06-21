@@ -3,11 +3,8 @@ import matplotlib.pyplot as plt
 import json
 import pandas as pd
 
-def variable_plotting(jets, outputFile = "output/test.pdf"):
+def variable_plotting(signal, bkg, outputFile = "output/test.pdf"):
 	
-	signal = jets.query('label==1')
-	bkg = jets.query('label==0')
-
 	nbins = 50
 	with open("input_Variables.json") as vardict:
 		variablelist = json.load(vardict)[:]
@@ -30,10 +27,7 @@ def variable_plotting(jets, outputFile = "output/test.pdf"):
 				s = s.dropna()
 			
 				minval = np.amin(b)
-				if 'pt' in var:
-					maxval = np.percentile(u,99.99)
-				else:
-					maxval = max([np.amax(u), np.amax(c), np.amax(b)])*1.4
+				maxval = max([np.amax(u), np.amax(c), np.amax(b)])*1.4
 				binning = np.linspace(minval,maxval,nbins)
 			
 				axobj.hist(b, binning,histtype=u'step', color='orange',label='background',density=1)
