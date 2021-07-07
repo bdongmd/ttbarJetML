@@ -1,7 +1,7 @@
 import tensorflow as tf
 import tensorflow.keras as keras
 
-def private_DL1Model(InputShape, h_layers, lr=0.01, drops=None, dropout=True, batch_size=3000):
+def private_DL1Model(InputShape, h_layers, lr=0.01, drops=None, dropout=True):
 	In = keras.layers.Input(shape=[InputShape,])
 	x = In
 	for i, h in enumerate(h_layers[:]):
