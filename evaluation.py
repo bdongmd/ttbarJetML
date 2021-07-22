@@ -1,5 +1,4 @@
 import numpy as np
-from plottingFunctions import sigBkgEff
 import h5py
 import tensorflow as tf
 import argparse
