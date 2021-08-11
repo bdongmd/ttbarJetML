@@ -1,5 +1,4 @@
 import numpy as np
-from plottingFunctions import sigBkgEff
 import h5py
 import tensorflow as tf
 import argparse
@@ -21,8 +20,8 @@ args = parser.parse_args()
 
 h5f_test = h5py.File(args.input_file, 'r')
 
-X_test = h5f_test['X_test'][:]
-Y_test = h5f_test['Y_test'][:]
+X_test = h5f_test['X_train'][:]
+Y_test = h5f_test['Y_train'][:]
 labels = h5f_test['labels'][:]
 
 h5f_test.close()
