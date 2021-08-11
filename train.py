@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 import os
 import h5py
@@ -27,27 +28,41 @@ parser.add_argument('-e', '--epoch', type=int,
 		help='Set epoch')
 
 args = parser.parse_args()
+
+## load input files
 h5f_train = h5py.File(args.input_file, 'r')
 
-totalEvents = len(h5f_train['X_train'])
-trainEvents = int(0.8*totalEvents)
-
-X_train = h5f_train['X_train'][:trainEvents]
-Y_train = h5f_train['Y_train'][:trainEvents]
-X_test = h5f_train['X_train'][trainEvents:]
-Y_test = h5f_train['Y_train'][trainEvents:]
-
-
+## setup model parameters
 InputShape=31
-h_layers=[60, 30, 15, 8]
-lr = 0.005
-drops=[0.1, 0.2, 0.2, 0.2]
-dropout=True
+outputShape=1 ## nodes in output layer
+h_layers=[60, 30, 15, 8] ## nodes in hiden layeres
+lr = 0.005 ## learning rate
+dropout=True ## True: use dropout in the mode. else not
+drops=[0.1, 0.2, 0.2, 0.2] ## dropout probabilities in each hidden layer 
 batch_size = args.batch_size
 
-Model = model.private_DL1Model(InputShape=InputShape, h_layers=h_layers, lr=lr, drops=drops, dropout=dropout)
+## get total number of events in the input sample
+totalEvents = len(h5f_train['X_train'])
+## use 80 percent for training and 20 percent for testing. The propotion can change
+trainEvents = int(0.8*totalEvents)
+X_train = h5f_train['X_train'][:trainEvents]
+
+## use Y_train for 2 output, and labels for 1 output
+if outputShape == 1:
+	Y_train = h5f_train['labels'][:trainEvents]
+	Y_test = h5f_train['labels'][trainEvents:]
+elif outputShape == 2:
+	Y_train = h5f_train['Y_train'][:trainEvents]
+	Y_test = h5f_train['Y_train'][trainEvents:]
+else:
+	print("ERROR: wrong output numbers. The number of output categories can only be 1 or 2.")
+	sys.exit()
+
+## load model
+Model = model.private_DL1Model(InputShape=InputShape, outputShape=outputShape, h_layers=h_layers, lr=lr, drops=drops, dropout=dropout)
 Model.summary()
 
+## callbacks, to save model for each epoch
 callbacks = [
     keras.callbacks.ModelCheckpoint(
         filepath='models/model_{epoch}',
@@ -59,7 +74,7 @@ history = Model.fit(X_train, Y_train,
                     batch_size = args.batch_size,
                     epochs = args.epoch,
                     validation_data=(X_test, Y_test),
-                    callbacks=callbacks
+                    #callbacks=callbacks
                     )
 
 Model.save("models/training_b{}_e{}.h5".format(args.batch_size, args.epoch))
