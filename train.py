@@ -33,7 +33,7 @@ args = parser.parse_args()
 h5f_train = h5py.File(args.input_file, 'r')
 
 ## setup model parameters
-InputShape=31
+InputShape=31 #8
 outputShape=1 ## nodes in output layer
 h_layers=[60, 30, 15, 8] ## nodes in hiden layeres
 lr = 0.005 ## learning rate
@@ -46,6 +46,7 @@ totalEvents = len(h5f_train['X_train'])
 ## use 80 percent for training and 20 percent for testing. The propotion can change
 trainEvents = int(0.8*totalEvents)
 X_train = h5f_train['X_train'][:trainEvents]
+X_test = h5f_train['X_train'][trainEvents:]
 
 ## use Y_train for 2 output, and labels for 1 output
 if outputShape == 1:
@@ -57,6 +58,7 @@ elif outputShape == 2:
 else:
 	print("ERROR: wrong output numbers. The number of output categories can only be 1 or 2.")
 	sys.exit()
+print("Progress: sample loaded")
 
 ## load model
 Model = model.private_DL1Model(InputShape=InputShape, outputShape=outputShape, h_layers=h_layers, lr=lr, drops=drops, dropout=dropout)
@@ -70,11 +72,13 @@ callbacks = [
     )
 ]
 
+print("Progress: training starts")
 history = Model.fit(X_train, Y_train,
                     batch_size = args.batch_size,
                     epochs = args.epoch,
                     validation_data=(X_test, Y_test),
-                    #callbacks=callbacks
+                    #callbacks=callbacks,
+		    verbose=2
                     )
 
 Model.save("models/training_b{}_e{}.h5".format(args.batch_size, args.epoch))
