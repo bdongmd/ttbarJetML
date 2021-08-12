@@ -1,5 +1,5 @@
 from keras.layers import BatchNormalization
-from keras.layers import Dense, Activation, Input, add
+from keras.layers import Dense, Activation, Input, Dropout, add
 from keras.models import Model
 from keras.optimizers import Adam
 import sys
@@ -12,12 +12,12 @@ def private_DL1Model(InputShape, outputShape, h_layers, lr=0.01, drops=None, dro
 		x = BatchNormalization()(x)
 		x = Activation('relu')(x)
 		if dropout:
-			x = keras.layers.Dropout(drops[i])(x)
+			x = Dropout(drops[i])(x)
 
 	if outputShape == 1:
-		predictions = keras.layers.Dense(outputShape, activation='sigmoid')(x)
+		predictions = Dense(outputShape, activation='sigmoid')(x)
 	elif outputShape == 2:
-		predictions = keras.layers.Dense(outputShape, activation='softmax')(x)
+		predictions = Dense(outputShape, activation='softmax')(x)
 	else:
 		print("ERROR: wrong output numbers. The number of output categories can only be 1 or 2.")
 		sys.exit()
