@@ -30,7 +30,6 @@ test_model = tf.keras.models.load_model(args.model_name)
 output = test_model.predict(X_test, verbose=2)
 
 h5f = h5py.File(args.output_file, 'w')
-h5f.create_dataset('pb', data=output[:,0], compression='gzip')
-h5f.create_dataset('ps', data=output[:,1], compression='gzip')
+h5f.create_dataset('outputScore', data=output[:,0], compression='gzip')
 h5f.create_dataset('labels', data=labels, compression='gzip')
 h5f.close()
