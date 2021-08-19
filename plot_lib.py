@@ -35,5 +35,6 @@ def plotOutputScore(score, labels, output_dir='output'):
 	plt.hist(outputScore[labels==0], bins=nbins, range=[0,1], density=True, label = 'background', histtype='step')
 	plt.ylabel('density')
 	plt.xlabel('probability')
+	plt.yscale('log')
 	plt.legend()
 	plt.savefig('{}/outputScore.pdf'.format(output_dir))
