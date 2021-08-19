@@ -9,7 +9,7 @@ from keras.models import load_model
 from keras.utils import np_utils
 from keras.callbacks import EarlyStopping, ModelCheckpoint 
 
-from plotting.plot_loss import plotAccLoss
+from plot_lib import plotAccLoss
 
 import argparse
 
