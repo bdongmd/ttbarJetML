@@ -3,11 +3,14 @@ import numpy as np
 import os
 import h5py
 import model
-import tensorflow as tf
 
+from tensorflow import keras
 from keras.models import load_model
 from keras.utils import np_utils
-import keras
+from keras.callbacks import EarlyStopping, ModelCheckpoint 
+
+from plotting.plot_loss import plotAccLoss
+
 import argparse
 
 parser = argparse.ArgumentParser(
@@ -18,7 +21,7 @@ parser.add_argument('-i', '--input_file', type=str,
 		help='Set name of preprocessed input training file')
 
 parser.add_argument('-o', '--output', type=str,
-		default='output/model_predicted.h5',
+		default='output',
 		help='set the output file')
 parser.add_argument('-b', '--batch_size', type=int,
 		default=3000,
@@ -32,8 +35,13 @@ args = parser.parse_args()
 ## load input files
 h5f_train = h5py.File(args.input_file, 'r')
 
+## plot acc/loss
+doPlotting = True
+## Save loss
+doSaveLoss = True
+
 ## setup model parameters
-InputShape=31 #8
+InputShape=31 ## number of input variables
 outputShape=1 ## nodes in output layer
 h_layers=[60, 30, 15, 8] ## nodes in hiden layeres
 lr = 0.005 ## learning rate
@@ -61,15 +69,15 @@ else:
 print("Progress: sample loaded")
 
 ## load model
-Model = model.private_DL1Model(InputShape=InputShape, outputShape=outputShape, h_layers=h_layers, lr=lr, drops=drops, dropout=dropout)
+Model = model.DNNModel(InputShape=InputShape, outputShape=outputShape, h_layers=h_layers, lr=lr, drops=drops, dropout=dropout)
 Model.summary()
 
-## callbacks, to save model for each epoch
+## callbacks
+## EarlyStopping: stop training if the validation accuracy doesn't incease for 20 epochs
+## ModelCheckPoint: save th model weights with the best accuracy
 callbacks = [
-    keras.callbacks.ModelCheckpoint(
-        filepath='models/model_{epoch}',
-        save_freq='epoch'
-    )
+		EarlyStopping(verbose=True, patience=20, monitor='val_accuracy'),
+		ModelCheckpoint('{}/training_b{}_e{}_bestacc.h5'.format(args.output, args.batch_size, args.epoch), monitor='val_accuracy', verbose=True, save_best_only=True, mode='max')
 ]
 
 print("Progress: training starts")
@@ -77,20 +85,25 @@ history = Model.fit(X_train, Y_train,
                     batch_size = args.batch_size,
                     epochs = args.epoch,
                     validation_data=(X_test, Y_test),
-                    #callbacks=callbacks,
+                    callbacks=callbacks,
 		    verbose=2
                     )
 
-Model.save("models/training_b{}_e{}.h5".format(args.batch_size, args.epoch))
+Model.save("{}/training_b{}_e{}.h5".format(args.output, args.batch_size, args.epoch))
 
 train_loss = history.history['loss']
 train_acc = history.history['accuracy']
 val_loss = history.history['val_loss']
 val_acc = history.history['val_accuracy']
 
-hf = h5py.File(args.output, 'w')
-hf.create_dataset('train_loss', data=train_loss)
-hf.create_dataset('train_acc', data=train_acc)
-hf.create_dataset('val_loss', data=val_loss)
-hf.create_dataset('val_acc', data=val_acc)
-hf.close()
+if doPlotting:
+	plotAccLoss(train_loss, val_loss, putVar='Loss', output_dir=args.output)
+	plotAccLoss(train_acc, val_acc, putVar='Acc', output_dir=args.output)
+
+if doSaveLoss:
+	hf = h5py.File('{}/train_loss.h5'.format(args.output), 'w')
+	hf.create_dataset('train_loss', data=train_loss)
+	hf.create_dataset('train_acc', data=train_acc)
+	hf.create_dataset('val_loss', data=val_loss)
+	hf.create_dataset('val_acc', data=val_acc)
+	hf.close()
