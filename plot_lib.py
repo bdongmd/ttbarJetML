@@ -36,4 +36,4 @@ def plotOutputScore(score, labels, output_dir='output'):
 	plt.ylabel('density')
 	plt.xlabel('probability')
 	plt.legend()
-	plt.savefig('{}/outputScore.pdf'.format(output))
+	plt.savefig('{}/outputScore.pdf'.format(output_dir))
