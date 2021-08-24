@@ -1,11 +1,11 @@
 This package is used for ttbar plus c analysis to distinush signal and background using Deep neural network.
 
 ## Dependency
-- uproot=3.4.3
+- uproot==3.4.3
 - pandas
 - h5py
 - numpy
-- tensorflow/keras
+- tensorflow/keras (2.4.0)
 - matplotlib
 
 ## Instructions
