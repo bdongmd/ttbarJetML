@@ -21,19 +21,26 @@ def plotOutputScore(score, labels, output_dir='output'):
 		if len(all_tagged)==0:
 			break
 		cut.append(scanvalue[i])
-		eff.append(100.*len(signal_tagged)/len(signal))
-		purity.append(100.*len(signal_tagged)/len(all_tagged))
+		eff.append(len(signal_tagged)/len(signal))
+		purity.append(len(signal_tagged)/len(all_tagged))
 
 	print("========= plotting =========")
 	fig = plt.figure()
 	ax = fig.add_axes([0.15, 0.1, 0.8, 0.8])
-	plt.plot(cut, eff, 'o', label='efficiency')
-	plt.plot(cut, purity, 'o', label='purity')
+	plt.plot(cut, eff, 'o', label='efficiency', color='black')
+	plt.plot(cut, purity, 'o', label='purity', color='red')
 	plt.xlabel('output score cut')
-	plt.ylabel('efficiency/purity (%)')
-	plt.ylim((0,120))
+	plt.ylim((0,1.2))
 	plt.legend()
 	plt.savefig('{}/eff.pdf'.format(output_dir))
+
+	fig = plt.figure()
+	ax = fig.add_axes([0.15, 0.1, 0.8, 0.8])
+	plt.plot(eff, purity, 'o', color='black')
+	plt.xlabel('efficiency')
+	plt.ylabel('purity')
+	plt.savefig('{}/eff_vs_purity.pdf'.format(output_dir))
+
 
 inputfile = h5py.File(sys.argv[1], 'r')
 labels = inputfile['labels'][:]
