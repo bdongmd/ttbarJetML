@@ -19,8 +19,6 @@ parser.add_argument('-o', '--output',type=str,
 
 args = parser.parse_args()
 
-doPlotting = True
-
 h5f_test = h5py.File(args.input_file, 'r')
 
 X_test = h5f_test['X_train'][:]
@@ -30,9 +28,7 @@ h5f_test.close()
 test_model = tf.keras.models.load_model(args.model_name)
 output = test_model.predict(X_test, verbose=2)
 
-if doPlotting:
-	plotOutputScore(output[:,0], labels, args.output)
-
+plotOutputScore(output[:,0], labels, args.output)
 
 h5f = h5py.File('{}/evaluaiton.h5'.format(args.output), 'w')
 h5f.create_dataset('outputScore', data=output[:,0], compression='gzip')

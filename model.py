@@ -1,10 +1,18 @@
 from keras.layers import BatchNormalization
-from keras.layers import Dense, Activation, Input, Dropout, add
+from keras.layers import Dense, Activation, Input, Dropout
 from keras.models import Model
 from keras.optimizers import Adam
-import sys
+from typing import Optional
 
-def private_DL1Model(InputShape, outputShape, h_layers, lr=0.01, drops=None, dropout=True):
+def DL1Model(InputShape: int, h_layers: list, lr: float=0.01, drops: Optional[float]=None, dropout: bool=True):
+	""" Define training model.
+	Args:
+	    InputShape (int): Number of input variables
+	    h_layers (list): Number of nodes in each hidden layer
+	    lr (float): learning rate
+	    drops (Opitional[float]): Dropout probability in each hidden layer
+	    dropout (bool): True to apply Dropout in each hidden layer, else not.
+	"""
 	In = Input(shape=[InputShape,])
 	x = In
 	for i, h in enumerate(h_layers[:]):
@@ -14,13 +22,7 @@ def private_DL1Model(InputShape, outputShape, h_layers, lr=0.01, drops=None, dro
 		if dropout:
 			x = Dropout(drops[i])(x)
 
-	if outputShape == 1:
-		predictions = Dense(outputShape, activation='sigmoid')(x)
-	elif outputShape == 2:
-		predictions = Dense(outputShape, activation='softmax')(x)
-	else:
-		print("ERROR: wrong output numbers. The number of output categories can only be 1 or 2.")
-		sys.exit()
+	predictions = Dense(1, activation='sigmoid')(x)
 
 	model = Model(inputs=In, outputs=predictions)
 
