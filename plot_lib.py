@@ -19,7 +19,7 @@ def plot_style(x_label: str, y_label: str) -> None:
 	if len(labels)>0:
 		plt.legend(frameon=False)
 
-def plotAccLoss(trainInput:list, testInput:list, putVar:str, output_dir: str='models') - > None:
+def plotAccLoss(trainInput:list, testInput:list, putVar:str, output_dir: str='models') -> None:
 	""" Compare the loss and accuracy between training and testing.
 	Args:
 	    trainInput (list): list of loss or accuracy values of the training sample for each epoch
